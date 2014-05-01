@@ -1,110 +1,43 @@
+//SJTU OJ 1002
+//solution is correct, but not elegant and general
+//initial analysis http://www.cnblogs.com/li-qiang/p/3338708.html
+//a more elegant and general solution prefix sum
 #include <iostream>
-#include <ctime>
 using namespace std;
+
+unsigned int prefix_sum[1000][1000] = {0};
 
 int main()
 {
-	unsigned int all_length, all_width;
-	unsigned int avai_length, avai_width;
-	unsigned   int * max;
-	unsigned   int max_last=0, max_now, max_diff = 0, max_tmp = 0, max_last_final = 0;
-	unsigned int **avai_num = NULL;
+	unsigned int L = 0, W = 0;
+	cin >> L >> W;
 
-	cin>>all_length>>all_width;
-
-	avai_num = new unsigned int* [all_length];
-
-	for(unsigned int i = 0; i < all_length; i++)
+	for(int i = 0; i < L; i++)
 	{
-		avai_num[i] = new unsigned int[all_width];
-	}
-
-	for(unsigned int i = 0; i < all_length; i++){
-		for(unsigned int j = 0; j < all_width; j++){
-			cin>>avai_num[i][j];
+		for(int j = 0; j < W; j++)
+		{
+			unsigned int value;
+			cin >> value;
+			if(i > 0 && j > 0) prefix_sum[i][j] = prefix_sum[i][j-1] + prefix_sum[i-1][j] - prefix_sum[i-1][j-1] + value;
+			else if(i == 0 && j > 0) prefix_sum[0][j] = prefix_sum[0][j-1] + value;
+			else if(i > 0 && j == 0) prefix_sum[i][0] = prefix_sum[i-1][0] + value;
+			else prefix_sum[0][0] = value;
 		}
 	}
 
-	cin>>avai_length>>avai_width;
-
-	if(avai_width >= all_length){
-		max = new unsigned  int [all_length - avai_length + 1];
-		for(unsigned int i = 0; i < all_length - avai_length + 1; i++){
-			max[i] = 0;
-		}
-		for(unsigned int i = 0; i < avai_length; i++){
-			for(unsigned int j = 0; j < avai_width; j++)
-				max[0] += avai_num[i][j];
-		}
-		for(unsigned int i = 1; i < all_length - avai_length + 1; i++){
-				for(unsigned int j = 0; j < avai_width; j++){
-					max_diff += avai_num[i+avai_length-1][j] - avai_num[i-1][j];
-				}
-				max[i]= max[i-1]+max_diff;
-				max_diff = 0;
-		}
-	
-		max_diff=0;
-		for(unsigned int i = 0; i < all_length -avai_length + 1; i++){
-			max_last_final = max[i];
-			for(unsigned int j = 1; j < all_width -avai_width + 1; j++){
-				for(unsigned int k = 0; k < avai_length; k++){
-					max_diff += avai_num[i+k][j+avai_width-1] - avai_num[i+k][j-1];
-				}
-				max_now = max_last_final + max_diff;
-				max_last_final = max_now;
-				if(max_now > max[i]) max[i] = max_now;
-				max_diff = 0;
-			}
-		}
-	
-		for(unsigned int i = 0; i < all_length - avai_length + 1; i++){
-			if(max_last_final < max[i]) max_last_final = max[i];
-		}
-		cout<<max_last_final;
-	}
-	else{
-		max = new unsigned  int [all_width - avai_width + 1];
-		for(unsigned int i = 0; i < all_width - avai_width + 1; i++){
-			max[i] = 0;
-		}
-		for(unsigned int i = 0; i < avai_length; i++){
-			for(unsigned int j = 0; j < avai_width; j++)
-				max[0] += avai_num[i][j];
-		}
-		for(unsigned int i = 1; i < all_width - avai_width + 1; i++){
-				for(unsigned int j = 0; j < avai_length; j++){
-					max_diff += avai_num[j][i+avai_width-1] - avai_num[j][i-1];
-				}
-				max[i]= max[i-1]+max_diff;
-				max_diff = 0;
-		}
-	
-		max_diff=0;
-		for(unsigned int i = 0; i < all_width -avai_width + 1; i++){
-			max_last_final = max[i];
-			for(unsigned int j = 1; j < all_length -avai_length + 1; j++){
-				for(unsigned int k = 0; k < avai_width; k++){
-					max_diff += avai_num[j+avai_length-1][i+k] - avai_num[j-1][i+k];
-				}
-				max_now = max_last_final + max_diff;
-				max_last_final = max_now;
-				if(max_now > max[i]) max[i] = max_now;
-				max_diff = 0;
-			}
-		}
-	
-		for(unsigned int i = 0; i < all_width - avai_width + 1; i++){
-			if(max_last_final < max[i]) max_last_final = max[i];
-		}
-		cout<<max_last_final;
-	}
-	for(unsigned int i = 0; i < all_length; i++)
+	unsigned int a = 0, b = 0, max = 0;
+	cin >> a >> b;
+	for(int i = a-1; i < L; i++)
 	{
-		delete [] avai_num[i];
+		for(int j = b-1; j < W; j++)
+		{
+			unsigned int sum = 0;
+			if(i >= a && j >= b) sum = prefix_sum[i][j] - prefix_sum[i-a][j] - prefix_sum[i][j-b] + prefix_sum[i-a][j-b];
+			else if(i == a-1 && j >= b) sum = prefix_sum[a-1][j] - prefix_sum[a-1][j-b];
+			else if(i >= a && j == b-1) sum = prefix_sum[i][b-1] - prefix_sum[i-a][b-1];
+			else sum = prefix_sum[a-1][b-1];
+			if(sum > max) max = sum;
+		}
 	}
-	
-	delete [] avai_num;
-	delete [] max;
-	return 0;
+	cout << max << endl;
 }
