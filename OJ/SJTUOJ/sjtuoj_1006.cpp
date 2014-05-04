@@ -12,6 +12,7 @@ int main()
 	int sum = 0;
 	int min_sum = 0;
 	int result = 0;
+	int begin = 0, end = 0;
 	cin>>size;
 
 	for(int i = 0; i < size; i++)
@@ -19,10 +20,19 @@ int main()
 		int num = 0;
 		cin >> num;
 		sum = sum + num;
-		result = max(result, sum - min_sum);
-		min_sum = min(min_sum, sum - num);
+		if(sum - min_sum > result)
+		{
+			end = i;
+			result = sum - min_sum;
+		}
+		if(sum - num < min_sum)
+		{
+			begin = i;
+			min_sum = sum - num;
+		}
 	}
 
+	cout << begin <<" "<<end <<endl;
 	if(result > 0) cout<<result;
 	else cout << "Game Over";
 
