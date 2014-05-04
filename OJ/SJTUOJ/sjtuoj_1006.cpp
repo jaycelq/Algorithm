@@ -1,35 +1,30 @@
 #include <iostream>
 using namespace std;
+//http://www.cnblogs.com/txd0u/p/3353355.html
+//the max sub sequence ended with element i is result[i] = sum[1:i] - min(sum[1:i-2])
+//result = min(result[1:n])
+#define max(x,y) x>y?x:y
+#define min(x,y) x<y?x:y
 
 int main()
 {
-	long int size;
-	long int *array = NULL, *sum = NULL, *min_sum = NULL;
-	long int max = 0,max_last = 0, max_now = 0,max_out=0;
-	long int start = 0, start_tmp = 0 ,end = 0;
+	int size;
+	int sum = 0;
+	int min_sum = 0;
+	int result = 0;
+	cin>>size;
 
-	cin >> size;
-
-	array = new long int [size];
-
-	for(long int i = 0; i < size; i++){
-		cin>>array[i];
+	for(int i = 0; i < size; i++)
+	{
+		int num = 0;
+		cin >> num;
+		sum = sum + num;
+		result = max(result, sum - min_sum);
+		min_sum = min(min_sum, sum - num);
 	}
-	max_last = array[0];
-	max = array[0] + array [1];
 
-	for(long int i = 2; i < size; i++){
-		if(max_last < 0 && array[i-2] < 0){
-			max_now = array[i-1]+array[i];
-		}
-		else max_now = max + array[i];
-		max_last = max;
-		max = max_now;
-		if(max_now > max_out) max_out=max_now;
-	}
-	if(max_out>0) cout<<max_out;
-	else cout<<"Game Over";
+	if(result > 0) cout<<result;
+	else cout << "Game Over";
 
-	delete [] array;
 	return 0;
 }
