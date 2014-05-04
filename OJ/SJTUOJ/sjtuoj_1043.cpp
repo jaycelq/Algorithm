@@ -1,6 +1,9 @@
 #include <iostream>
 using namespace std;
 
+// Construct a binary tree 
+// Judge whether it is a complete tree
+
 class Node
 {public:
 	Node * left;
