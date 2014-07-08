@@ -163,7 +163,10 @@ pip-log.txt
 .DS_Store
 
 #DrJava
-.class
+*.class
 
 #Excutable
-.exe
+*.exe
+
+#Zipfile
+*.zip
